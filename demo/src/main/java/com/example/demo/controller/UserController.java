@@ -2,9 +2,10 @@ package com.example.demo.controller;
 
 import com.example.demo.model.User;
 import com.example.demo.service.UserService;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/users")
@@ -16,13 +17,25 @@ public class UserController {
         this.userService = userService;
     }
 
-    @PostMapping
-    public User createUser(@RequestBody User user) {
-        return userService.createUser(user);
+    @PostMapping("/register")
+    public ResponseEntity<?> register(@RequestBody User user) {
+        try {
+            User created = userService.createUser(user);
+            created.setPassword(null);
+            return ResponseEntity.ok(created);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(Map.of("erro", e.getMessage()));
+        }
     }
 
-    @GetMapping
-    public List<User> getUsers() {
-        return userService.getUsers();
+    @PostMapping("/login")
+    public ResponseEntity<?> login(@RequestBody Map<String, String> body) {
+        try {
+            User user = userService.login(body.get("email"), body.get("password"));
+            user.setPassword(null);
+            return ResponseEntity.ok(user);
+        } catch (Exception e) {
+            return ResponseEntity.status(401).body(Map.of("erro", e.getMessage()));
+        }
     }
 }
