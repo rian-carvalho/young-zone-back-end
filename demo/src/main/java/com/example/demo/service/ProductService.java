@@ -32,14 +32,15 @@ public class ProductService {
     }
 
     public Product updateProduct(Long id, Product productDetails) {
-
         Product product = productRepository.findById(id).orElse(null);
 
         if (product != null) {
             product.setName(productDetails.getName());
             product.setPrice(productDetails.getPrice());
             product.setDescription(productDetails.getDescription());
-
+            product.setImageUrl(productDetails.getImageUrl());
+            product.setStock(productDetails.getStock());
+            product.setCategory(productDetails.getCategory());
             return productRepository.save(product);
         }
 
